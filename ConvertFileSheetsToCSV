@@ -1,0 +1,64 @@
+Sub ConvertFileSheetsToCSV 
+REM Takes files from a directory and converts ALL the sheets to CSV
+REM INPUT DirLocIN - Change to your input direcotry
+REM OUTPUT DirLocOUT - Change to your output direcotry
+REM Change DirLocIN DirLocOUT to your location
+  
+  Dim NextFile As String
+  Dim DirLocIN as String
+  Dim DirLocOUT as String
+  Dim PartURL as String
+  Dim Doc As Object  
+  Dim Dummy()
+
+     
+     
+  If (Not GlobalScope.BasicLibraries.isLibraryLoaded("Tools")) Then
+      GlobalScope.BasicLibraries.LoadLibrary("Tools")
+   End If
+   
+   'content of an opened window can be replaced with the help of the frame parameter and SearchFlags:
+   
+  SearchFlags = com.sun.star.frame.FrameSearchFlag.CREATE + _
+  com.sun.star.frame.FrameSearchFlag.ALL
+
+
+
+  ' Set up a propval object to store the filter properties
+  Dim Propval(1) as New com.sun.star.beans.PropertyValue
+  Propval(0).Name = "FilterName"
+  Propval(0).Value = "Text - txt - csv (StarCalc)"
+  Propval(1).Name = "FilterOptions"
+  Propval(1).Value = "44,34,76,1"
+
+
+  DirLocIN="~/Desktop/OpenOffice/examples/input/"
+
+  DirLocOUT="~/Desktop/OpenOffice/examples/output/"
+
+  PartURL="file:///"
+
+  NextFile = Dir(DirLocIN, 0 )
+ 
+  While NextFile  <> ""
+    AllFiles = AllFiles & Chr(13) &  NextFile 
+    Url = PartURL+DirLocIN+NextFile
+    
+    Doc = StarDesktop.loadComponentFromURL(Url, "MyFrame", _SearchFlags, Dummy)
+
+	BaseFilename = Tools.Strings.GetFileNameWithoutExtension(NextFile)
+
+	Sheets = Doc.Sheets
+	NumSheets = Sheets.Count - 1
+		For J = 0 to NumSheets
+
+			SheetName = Sheets(J).Name
+			Doc.getCurrentController.setActiveSheet(Sheets(J))		
+			Filename = DirLocOUT + BaseFilename + "."+ SheetName + ".csv"
+			FileURL = convertToURL(Filename)
+			Doc.StoreAsURL(FileURL, Propval())
+        Next J
+    Doc.close(true)
+    NextFile = Dir
+  Wend		
+End sub
