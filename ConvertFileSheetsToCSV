@@ -1,8 +1,8 @@
 Sub ConvertFileSheetsToCSV 
 REM Takes files from a directory and converts ALL the sheets to CSV
 
-REM INPUT DirLocIN - Change to your input dirctory
-REM OUTPUT DirLocOUT - Change to your output dirctory
+REM INPUT DirLocIN - Change to your input directory
+REM OUTPUT DirLocOUT - Change to your output directory
 
   
   Dim NextFile As String
